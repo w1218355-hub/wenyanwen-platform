@@ -4,11 +4,20 @@ import { useNavigate } from 'react-router-dom'
 interface TopBarProps {
   title: string
   showBack?: boolean
+  onBack?: () => void
   rightAction?: { label: string; onClick: () => void }
 }
 
-export default function TopBar({ title, showBack = true, rightAction }: TopBarProps) {
+export default function TopBar({ title, showBack = true, onBack, rightAction }: TopBarProps) {
   const navigate = useNavigate()
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack()
+    } else {
+      navigate(-1)
+    }
+  }
 
   return (
     <header
@@ -23,7 +32,7 @@ export default function TopBar({ title, showBack = true, rightAction }: TopBarPr
         <div style={{ width: '64px' }}>
           {showBack && (
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
               className="text-sm transition-colors duration-200"
               style={{ color: 'rgba(31,26,20,0.5)' }}
             >

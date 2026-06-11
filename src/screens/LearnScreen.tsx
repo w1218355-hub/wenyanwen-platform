@@ -20,6 +20,7 @@ const MODULES = [
 export default function LearnScreen() {
   const navigate = useNavigate()
   const [page, setPage] = useState<SubPage>('hub')
+  const [pageStack, setPageStack] = useState<SubPage[]>([])
   const [selectedTextId, setSelectedTextId] = useState<string | null>(null)
   const [wordIndex, setWordIndex] = useState(0)
   const [showWordAnswer, setShowWordAnswer] = useState(false)
@@ -31,6 +32,30 @@ export default function LearnScreen() {
   const [puzzleSentence, setPuzzleSentence] = useState(PUZZLE_SENTENCES[0])
   const [puzzlePieces, setPuzzlePieces] = useState<string[]>([])
   const [puzzleSolved, setPuzzleSolved] = useState(false)
+
+  // Navigate to sub-page, pushing current page to stack
+  const goTo = (next: SubPage) => {
+    setPageStack(prev => [...prev, page])
+    setPage(next)
+  }
+
+  // Go back: pop from stack or go to hub
+  const goBack = () => {
+    if (pageStack.length > 0) {
+      const prev = pageStack[pageStack.length - 1]
+      setPageStack(prev => prev.slice(0, -1))
+      setPage(prev)
+      // Reset detail states when going back
+      if (prev === 'hub' || prev === 'classic' || prev === 'words' || prev === 'grammar' || prev === 'pastpaper') {
+        setSelectedTextId(null)
+        setGrammarDetailId(null)
+        setPastpaperYear(null)
+        setShowWordAnswer(false)
+      }
+    } else {
+      setPage('hub')
+    }
+  }
 
   const startPuzzle = () => {
     const chars = puzzleSentence.original.split('')
@@ -56,7 +81,7 @@ export default function LearnScreen() {
       <TopBar
         title={barTitle}
         showBack={page !== 'hub'}
-        rightAction={page !== 'hub' ? { label: '返回', onClick: () => { setPage('hub'); setSelectedTextId(null); setGrammarDetailId(null); setPastpaperYear(null) } } : undefined}
+        onBack={goBack}
       />
 
       <div className="app-container mx-auto px-4 pb-24 space-y-4">
@@ -73,7 +98,7 @@ export default function LearnScreen() {
                   key={m.id}
                   onClick={() => {
                     if (m.id === 'puzzle') startPuzzle()
-                    setPage(m.id)
+                    goTo(m.id)
                   }}
                   className="card-ink p-4 text-left flex items-center gap-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
@@ -112,7 +137,7 @@ export default function LearnScreen() {
               return (
                 <button
                   key={text.id}
-                  onClick={() => { setSelectedTextId(text.id); setPage('classic-detail') }}
+                  onClick={() => { setSelectedTextId(text.id); goTo('classic-detail') }}
                   className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
@@ -169,7 +194,7 @@ export default function LearnScreen() {
               {WORD_CARDS.map((card, i) => (
                 <button
                   key={card.id}
-                  onClick={() => { setWordIndex(i); setShowWordAnswer(false); setPage('words-practice') }}
+                  onClick={() => { setWordIndex(i); setShowWordAnswer(false); goTo('words-practice') }}
                   className="card-ink p-3 text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex gap-3">
@@ -273,7 +298,7 @@ export default function LearnScreen() {
                     </button>
                   )}
                   <button
-                    onClick={() => { setPage('words'); setShowWordAnswer(false) }}
+                    onClick={() => { goBack(); setShowWordAnswer(false) }}
                     className="py-2.5 px-4 rounded-xl text-xs transition-all"
                     style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)' }}
                   >
@@ -294,7 +319,7 @@ export default function LearnScreen() {
               return (
                 <button
                   key={g.id}
-                  onClick={() => { setGrammarDetailId(g.id); setPage('grammar-detail') }}
+                  onClick={() => { setGrammarDetailId(g.id); goTo('grammar-detail') }}
                   className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
@@ -336,7 +361,7 @@ export default function LearnScreen() {
             {PAST_PAPERS.map((pp, i) => (
               <button
                 key={pp.year}
-                onClick={() => { setPastpaperYear(pp.year); setPage('pastpaper-quiz') }}
+                onClick={() => { setPastpaperYear(pp.year); goTo('pastpaper-quiz') }}
                 className="card-ink text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md overflow-hidden"
               >
                 <div className="flex items-stretch">
