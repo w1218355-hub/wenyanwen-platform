@@ -26,7 +26,7 @@ export default function BottomNav() {
       }}
     >
       <div className="app-container mx-auto flex justify-around items-end h-16 pb-1 relative">
-        {TABS.map((tab, i) => {
+        {TABS.map((tab) => {
           const active = location.pathname.startsWith(tab.path)
           return (
             <button

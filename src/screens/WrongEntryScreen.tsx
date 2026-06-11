@@ -6,7 +6,6 @@ import TopBar from '../components/TopBar'
 export default function WrongEntryScreen() {
   const navigate = useNavigate()
   const [step, setStep] = useState<'input' | 'ocr' | 'confirm'>('input')
-  const [inputMode, setInputMode] = useState<'photo' | 'text' | null>(null)
   const [ocrText, setOcrText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [selectedText, setSelectedText] = useState('')
@@ -15,7 +14,6 @@ export default function WrongEntryScreen() {
 
   const handleFileUpload = () => {
     setStep('ocr')
-    // Simulate OCR
     setTimeout(() => {
       setOcrText('下列句中「之」字用法不同於其他三項的是：\nA. 何厭之有\nB. 吾欲之南海\nC. 句讀之不知\nD. 何陋之有')
       setMatched(true)
@@ -36,41 +34,57 @@ export default function WrongEntryScreen() {
 
   if (step === 'ocr') {
     return (
-      <div className="min-h-screen bg-[#faf8f5]">
-        <TopBar title="录入错题" />
-        <div className="max-w-lg mx-auto p-4 flex flex-col items-center justify-center min-h-[80vh]">
-          <div className="w-16 h-16 rounded-full bg-[#1a6b4a]/10 flex items-center justify-center mb-4 animate-pulse">
-            <svg className="w-8 h-8 text-[#1a6b4a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="min-h-screen" style={{ background: 'var(--paper)' }}>
+        <TopBar title="錄入錯題" />
+        <div className="app-container mx-auto p-4 flex flex-col items-center justify-center" style={{ minHeight: '70vh' }}>
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center mb-4 animate-pulse"
+            style={{ background: 'var(--jade-light)' }}
+          >
+            <svg className="w-10 h-10" style={{ color: 'var(--jade)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
             </svg>
           </div>
-          <p className="text-sm text-gray-500">正在 OCR 识别中...</p>
+          <p className="text-sm" style={{ color: 'rgba(31,26,20,0.5)' }}>正在 OCR 識別中...</p>
+          <div className="mt-8 flex gap-1">
+            {[0, 1, 2].map(i => (
+              <div
+                key={i}
+                className="w-2 h-2 rounded-full animate-pulse"
+                style={{ background: 'var(--jade)', animationDelay: `${i * 0.2}s` }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f5]">
-      <TopBar title="录入错题" />
+    <div className="min-h-screen" style={{ background: 'var(--paper)' }}>
+      <TopBar title="錄入錯題" />
 
       {step === 'input' && (
-        <div className="max-w-lg mx-auto p-4 space-y-6">
+        <div className="app-container mx-auto px-4 pb-8 space-y-6">
           {/* Upload area */}
           <button
-            onClick={() => { setInputMode('photo'); handleFileUpload() }}
-            className="w-full border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#1a6b4a] hover:bg-[#1a6b4a]/5 transition-colors group"
+            onClick={() => { handleFileUpload() }}
+            className="w-full rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg group"
+            style={{
+              border: '2px dashed rgba(26,107,74,0.2)',
+              background: 'linear-gradient(180deg, rgba(26,107,74,0.02), rgba(26,107,74,0.04))',
+            }}
           >
-            <div className="text-3xl mb-2">📷</div>
-            <p className="text-sm text-gray-600 font-medium">拍照或上传截图</p>
-            <p className="text-xs text-gray-400 mt-1">支持微信截图直接粘贴</p>
+            <div className="text-4xl mb-3">📷</div>
+            <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>拍照或上傳截圖</p>
+            <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.35)' }}>支援微信截圖直接粘貼</p>
           </button>
 
           {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400">或者</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <div className="flex-1" style={{ height: '1px', background: 'rgba(31,26,20,0.06)' }} />
+            <span className="text-xs" style={{ color: 'rgba(31,26,20,0.25)' }}>或者</span>
+            <div className="flex-1" style={{ height: '1px', background: 'rgba(31,26,20,0.06)' }} />
           </div>
 
           {/* Text input */}
@@ -78,8 +92,16 @@ export default function WrongEntryScreen() {
             <textarea
               value={selectedText}
               onChange={e => setSelectedText(e.target.value)}
-              placeholder="直接粘贴题目文字..."
-              className="w-full h-32 p-3 rounded-xl border border-gray-200 text-sm resize-none focus:outline-none focus:border-[#1a6b4a] bg-white"
+              placeholder="直接粘貼題目文字..."
+              className="w-full h-32 p-4 rounded-xl text-sm resize-none transition-all font-serif leading-relaxed"
+              style={{
+                border: '1px solid rgba(31,26,20,0.1)',
+                background: '#fff',
+                outline: 'none',
+                color: 'var(--ink)',
+              }}
+              onFocus={e => (e.target.style.borderColor = 'var(--jade)')}
+              onBlur={e => (e.target.style.borderColor = 'rgba(31,26,20,0.1)')}
             />
 
             {/* Quick tags */}
@@ -87,9 +109,10 @@ export default function WrongEntryScreen() {
               <select
                 value={selectedType}
                 onChange={e => setSelectedType(e.target.value)}
-                className="text-xs px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-600"
+                className="text-xs px-3 py-2 rounded-full transition-all"
+                style={{ border: '1px solid rgba(31,26,20,0.1)', background: '#fff', color: 'rgba(31,26,20,0.5)' }}
               >
-                <option value="">选择篇章（可选）</option>
+                <option value="">選擇篇章（可選）</option>
                 <option value="lunyu">論語八則</option>
                 <option value="yuwo">魚我所欲也</option>
                 <option value="xiaoyao">逍遙遊</option>
@@ -103,9 +126,9 @@ export default function WrongEntryScreen() {
                 <option value="lianpo">廉頗藺相如列傳</option>
                 <option value="shengman">聲聲慢·秋情</option>
               </select>
-              <select className="text-xs px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-600">
-                <option value="">题型标签（可选）</option>
-                <option>字词释义</option>
+              <select className="text-xs px-3 py-2 rounded-full" style={{ border: '1px solid rgba(31,26,20,0.1)', background: '#fff', color: 'rgba(31,26,20,0.5)' }}>
+                <option value="">題型標籤（可選）</option>
+                <option>字詞釋義</option>
                 <option>句子理解</option>
                 <option>篇章分析</option>
               </select>
@@ -114,35 +137,40 @@ export default function WrongEntryScreen() {
             <button
               onClick={handleTextSubmit}
               disabled={!selectedText.trim()}
-              className="w-full py-2.5 rounded-xl bg-[#1a6b4a] text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-3 rounded-xl text-white text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
+              style={{ background: 'var(--jade)', boxShadow: '0 4px 14px rgba(26,107,74,0.2)' }}
             >
-              开始分析
+              開始分析
             </button>
           </div>
         </div>
       )}
 
       {step === 'confirm' && (
-        <div className="max-w-lg mx-auto p-4 space-y-4">
+        <div className="app-container mx-auto px-4 pb-8 space-y-4">
           {/* OCR Result */}
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="card-ink p-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-gray-700">OCR 识别结果</h3>
+              <p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>OCR 識別結果</p>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="text-xs text-[#1a6b4a]"
+                className="text-xs transition-colors"
+                style={{ color: 'var(--jade)' }}
               >
-                {isEditing ? '完成编辑' : '✏️ 编辑修正'}
+                {isEditing ? '完成編輯' : '✏️ 編輯修正'}
               </button>
             </div>
             {isEditing ? (
               <textarea
                 value={ocrText}
                 onChange={e => setOcrText(e.target.value)}
-                className="w-full h-32 p-3 rounded-lg border border-gray-200 text-sm resize-none focus:outline-none focus:border-[#1a6b4a]"
+                className="w-full h-32 p-3 rounded-lg text-sm resize-none transition-all"
+                style={{ border: '1px solid rgba(31,26,20,0.1)', outline: 'none' }}
+                onFocus={e => (e.target.style.borderColor = 'var(--jade)')}
+                onBlur={e => (e.target.style.borderColor = 'rgba(31,26,20,0.1)')}
               />
             ) : (
-              <pre className="text-sm text-[#2c2c2c] whitespace-pre-wrap font-serif leading-relaxed">
+              <pre className="text-sm whitespace-pre-wrap font-serif leading-relaxed" style={{ color: 'var(--ink)', fontFamily: '"Noto Serif SC", serif' }}>
                 {ocrText}
               </pre>
             )}
@@ -150,24 +178,28 @@ export default function WrongEntryScreen() {
 
           {/* Match result */}
           {matched && (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-              <p className="text-sm text-green-700">
-                ✅ 已匹配题库：《師說》第3题
+            <div
+              className="rounded-2xl p-4"
+              style={{ background: 'var(--jade-light)', border: '1px solid rgba(26,107,74,0.15)' }}
+            >
+              <p className="text-sm font-medium" style={{ color: 'var(--jade)' }}>
+                ✅ 已匹配題庫：《師說》第3題
               </p>
             </div>
           )}
 
           {/* Detected knowledge */}
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
-            <p className="text-xs text-gray-400 mb-1">📌 检测知识点</p>
-            <p className="text-sm font-medium text-[#2c2c2c]">虚词·之·宾语前置标志</p>
+          <div className="card-ink p-4">
+            <p className="text-xs mb-1" style={{ color: 'rgba(31,26,20,0.3)' }}>📌 檢測知識點</p>
+            <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>虛詞·之·賓語前置標誌</p>
           </div>
 
           <button
             onClick={handleConfirm}
-            className="w-full py-3 rounded-xl bg-[#1a6b4a] text-white font-medium"
+            className="w-full py-3.5 rounded-xl text-white font-bold text-base transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+            style={{ background: 'var(--jade)', boxShadow: '0 4px 16px rgba(26,107,74,0.25)' }}
           >
-            确认无误，开始分析
+            確認無誤，開始分析
           </button>
         </div>
       )}

@@ -439,7 +439,7 @@ export const ANCIENT_POSTS: AncientPost[] = [
     ],
   },
   {
-    id: 5, author: { name: '李白', dynasty: '唐', avatar: '🍶', textId: '', greeting: '' },
+    id: 5, author: { id: 'libai', name: '李白', dynasty: '唐', avatar: '🍶', textId: '', greeting: '' },
     content: '舉頭望明月，低頭思故鄉。今夜月色如霜，不知故鄉親友是否安好？',
     likes: 512, comments: 6, time: '3小時前',
     gradientFrom: '#fef3c7', gradientTo: '#fde68a', borderColor: '#fcd34d', textColor: '#92400e',
@@ -449,7 +449,7 @@ export const ANCIENT_POSTS: AncientPost[] = [
     ],
   },
   {
-    id: 6, author: { name: '陶淵明', dynasty: '東晉', avatar: '🌿', textId: '', greeting: '' },
+    id: 6, author: { id: 'taoyuanming', name: '陶淵明', dynasty: '東晉', avatar: '🌿', textId: '', greeting: '' },
     content: '采菊東籬下，悠然見南山。山氣日夕佳，飛鳥相與還。此中有真意，欲辯已忘言。',
     likes: 367, comments: 4, time: '1天前',
     gradientFrom: '#ecfccb', gradientTo: '#d9f99d', borderColor: '#bef264', textColor: '#3f6212',
@@ -458,7 +458,7 @@ export const ANCIENT_POSTS: AncientPost[] = [
     ],
   },
   {
-    id: 7, author: { name: '范仲淹', dynasty: '北宋', avatar: '🏯', textId: '', greeting: '' },
+    id: 7, author: { id: 'fanzhongyan', name: '范仲淹', dynasty: '北宋', avatar: '🏯', textId: '', greeting: '' },
     content: '先天下之憂而憂，後天下之樂而樂。今日觀岳陽樓重修圖，感慨萬千，特此抒懷。',
     likes: 423, comments: 5, time: '6小時前',
     gradientFrom: '#e0f2fe', gradientTo: '#bae6fd', borderColor: '#7dd3fc', textColor: '#075985',
@@ -467,7 +467,7 @@ export const ANCIENT_POSTS: AncientPost[] = [
     ],
   },
   {
-    id: 8, author: { name: '歐陽修', dynasty: '北宋', avatar: '🍷', textId: '', greeting: '' },
+    id: 8, author: { id: 'ouyangxiu', name: '歐陽修', dynasty: '北宋', avatar: '🍷', textId: '', greeting: '' },
     content: '醉翁之意不在酒，在乎山水之間也。山水之樂，得之心而寓之酒也。',
     likes: 198, comments: 2, time: '4天前',
     gradientFrom: '#f1f5f9', gradientTo: '#e2e8f0', borderColor: '#cbd5e1', textColor: '#334155',

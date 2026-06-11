@@ -16,11 +16,11 @@ export default function VariantScreen() {
   const question = variants[currentQ]
   if (!question) {
     return (
-      <div className="min-h-screen bg-[#faf8f5]">
-        <TopBar title="变式检验" />
-        <div className="max-w-lg mx-auto p-4 text-center pt-20">
-          <p className="text-lg">🎉</p>
-          <p className="text-sm text-gray-500 mt-2">暂无变式题</p>
+      <div className="min-h-screen" style={{ background: 'var(--paper)' }}>
+        <TopBar title="變式檢驗" />
+        <div className="app-container mx-auto px-4 text-center pt-20">
+          <p className="text-4xl mb-4">🎉</p>
+          <p className="text-sm" style={{ color: 'rgba(31,26,20,0.4)' }}>暫無變式題</p>
         </div>
       </div>
     )
@@ -42,7 +42,6 @@ export default function VariantScreen() {
       setSelected(null)
       setShowResult(false)
     } else {
-      // All done → mark as mastered, go to home
       navigate('/home', { state: { justCompleted: true } })
     }
   }
@@ -53,30 +52,41 @@ export default function VariantScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f5]">
-      <TopBar title={`变式检验 ${currentQ + 1}/${variants.length}`} />
+    <div className="min-h-screen" style={{ background: 'var(--paper)' }}>
+      <TopBar title={`變式檢驗 ${currentQ + 1}/${variants.length}`} />
 
-      <div className="max-w-lg mx-auto p-4 space-y-4">
+      <div className="app-container mx-auto px-4 pb-8 space-y-4">
         {/* Progress */}
         <div className="flex gap-1">
           {variants.map((_, i) => (
             <div
               key={i}
-              className={`flex-1 h-1 rounded-full ${
-                i < currentQ ? 'bg-green-500' : i === currentQ ? 'bg-[#e8913a]' : 'bg-gray-200'
-              }`}
+              className="flex-1 h-1.5 rounded-full transition-colors duration-300"
+              style={{
+                background: i < currentQ
+                  ? 'var(--jade)'
+                  : i === currentQ
+                    ? 'var(--gold)'
+                    : 'rgba(31,26,20,0.08)',
+              }}
             />
           ))}
         </div>
 
         {/* Question */}
-        <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+        <div className="card-ink p-5">
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs bg-[#1a6b4a]/10 text-[#1a6b4a] px-2 py-0.5 rounded-full">
-              变式题·同一知识点
+            <span
+              className="text-xs px-2.5 py-1 rounded-full"
+              style={{ background: 'var(--jade-light)', color: 'var(--jade)' }}
+            >
+              變式題 · 同一知識點
             </span>
           </div>
-          <pre className="text-sm text-[#2c2c2c] font-serif whitespace-pre-wrap leading-relaxed">
+          <pre
+            className="text-sm whitespace-pre-wrap font-serif leading-relaxed"
+            style={{ color: 'var(--ink)', fontFamily: '"Noto Serif SC", serif' }}
+          >
             {question.question}
           </pre>
         </div>
@@ -84,19 +94,36 @@ export default function VariantScreen() {
         {/* Options */}
         <div className="space-y-2">
           {question.options.map(opt => {
-            let borderColor = 'border-gray-200'
-            let bgColor = 'bg-white'
+            let optStyle: React.CSSProperties = {
+              border: '1px solid rgba(31,26,20,0.08)',
+              background: '#fff',
+            }
+            let indicator = null
+
             if (showResult) {
               if (opt === question.correctAnswer) {
-                borderColor = 'border-green-400'
-                bgColor = 'bg-green-50'
+                optStyle = {
+                  border: '1.5px solid var(--jade)',
+                  background: 'var(--jade-light)',
+                  color: 'var(--jade)',
+                  boxShadow: '0 4px 12px rgba(26,107,74,0.15)',
+                }
+                indicator = <span style={{ color: 'var(--jade)' }}>✓</span>
               } else if (opt === selected && opt !== question.correctAnswer) {
-                borderColor = 'border-red-300'
-                bgColor = 'bg-red-50'
+                optStyle = {
+                  border: '1.5px solid var(--vermillion)',
+                  background: 'rgba(187,90,90,0.06)',
+                  color: 'var(--vermillion)',
+                }
+                indicator = <span style={{ color: 'var(--vermillion)' }}>✗</span>
               }
             } else if (selected === opt) {
-              borderColor = 'border-[#1a6b4a]'
-              bgColor = 'bg-[#1a6b4a]/5'
+              optStyle = {
+                border: '2px solid var(--jade)',
+                background: 'var(--jade-light)',
+                color: 'var(--jade)',
+                boxShadow: '0 4px 12px rgba(26,107,74,0.15)',
+              }
             }
 
             return (
@@ -104,16 +131,14 @@ export default function VariantScreen() {
                 key={opt}
                 onClick={() => !showResult && handleSelect(opt)}
                 disabled={showResult}
-                className={`w-full p-3 rounded-xl border ${borderColor} ${bgColor} text-left text-sm transition-colors`}
+                className="w-full p-3.5 rounded-xl text-left text-sm transition-all duration-200 flex items-center justify-between"
+                style={optStyle}
               >
-                <span className="font-medium text-gray-500 mr-2">{opt}.</span>
-                <span className="text-gray-700">{opt}</span>
-                {showResult && opt === question.correctAnswer && (
-                  <span className="float-right text-green-600">✓</span>
-                )}
-                {showResult && opt === selected && opt !== question.correctAnswer && (
-                  <span className="float-right text-red-500">✗</span>
-                )}
+                <span>
+                  <span className="font-medium mr-2" style={{ opacity: 0.5 }}>{opt}.</span>
+                  <span>{opt}</span>
+                </span>
+                {indicator}
               </button>
             )
           })}
@@ -121,32 +146,46 @@ export default function VariantScreen() {
 
         {/* Result */}
         {showResult && (
-          <div className={`rounded-xl p-4 ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-            <p className={`text-sm font-medium ${isCorrect ? 'text-green-700' : 'text-red-600'}`}>
-              {isCorrect ? '✅ 回答正确！' : '❌ 回答错误'}
+          <div
+            className="rounded-2xl p-4"
+            style={isCorrect
+              ? { background: 'var(--jade-light)', border: '1px solid rgba(26,107,74,0.15)' }
+              : { background: 'rgba(187,90,90,0.06)', border: '1px solid rgba(187,90,90,0.15)' }
+            }
+          >
+            <p
+              className="text-sm font-medium mb-1"
+              style={{ color: isCorrect ? 'var(--jade)' : 'var(--vermillion)' }}
+            >
+              {isCorrect ? '✅ 回答正確！' : '❌ 回答錯誤'}
             </p>
-            <p className="text-xs text-gray-600 mt-1">{question.explanation}</p>
+            <p className="text-xs leading-relaxed" style={{ color: 'rgba(31,26,20,0.5)' }}>
+              {question.explanation}
+            </p>
             <div className="flex gap-2 mt-3">
               {isCorrect ? (
                 <button
                   onClick={handleNext}
-                  className="flex-1 py-2 rounded-lg bg-[#1a6b4a] text-white text-sm"
+                  className="flex-1 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                  style={{ background: 'var(--jade)', boxShadow: '0 4px 14px rgba(26,107,74,0.2)' }}
                 >
-                  {currentQ < variants.length - 1 ? '下一题' : '完成 →'}
+                  {currentQ < variants.length - 1 ? '下一題' : '完成 →'}
                 </button>
               ) : (
                 <>
                   <button
                     onClick={handleRetry}
-                    className="flex-1 py-2 rounded-lg bg-[#e8913a] text-white text-sm"
+                    className="flex-1 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                    style={{ background: 'var(--gold)', boxShadow: '0 4px 14px rgba(200,164,92,0.3)' }}
                   >
-                    重试
+                    重試
                   </button>
                   <button
                     onClick={() => navigate(`/socratic/${knowledgeId}/${wrongId}`)}
-                    className="flex-1 py-2 rounded-lg border border-[#1a6b4a] text-[#1a6b4a] text-sm"
+                    className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+                    style={{ border: '1px solid var(--jade)', color: 'var(--jade)' }}
                   >
-                    返回苏格拉底引导
+                    返回蘇格拉底引導
                   </button>
                 </>
               )}
@@ -155,8 +194,8 @@ export default function VariantScreen() {
         )}
 
         {/* Score */}
-        <p className="text-center text-xs text-gray-400">
-          已答对 {correctCount}/{variants.length} 题
+        <p className="text-center text-xs" style={{ color: 'rgba(31,26,20,0.25)' }}>
+          已答對 {correctCount}/{variants.length} 題
         </p>
       </div>
     </div>

@@ -18,7 +18,6 @@ export default function KnowledgeScreen() {
   const filtered = KNOWLEDGE_POINTS.filter(k =>
     !searchQuery || k.name.includes(searchQuery) || k.category.includes(searchQuery)
   )
-  const selected = KNOWLEDGE_POINTS.find(k => k.id === selectedId)
   const graph = buildKnowledgeGraph({ k1: 4, k4: 3, k6: 2 })
 
   useEffect(() => {

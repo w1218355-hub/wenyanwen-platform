@@ -2,7 +2,6 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import TopBar from '../components/TopBar'
 import { MOCK_WRONG_ANSWERS } from '../data/mockData'
-import { getKnowledgeName, getKnowledgeDefinition } from '../core/socratic'
 
 export default function AnswerScreen() {
   const navigate = useNavigate()

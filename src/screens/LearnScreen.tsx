@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import TopBar from '../components/TopBar'
 import { DSE_TEXTS, WORD_CARDS, GRAMMAR_POINTS, PAST_PAPERS, ANCIENT_CHARACTERS, ANCIENT_POSTS, PUZZLE_SENTENCES } from '../data/mockData'
-import type { WordCard } from '../data/mockData'
 
 type SubPage = 'hub' | 'classic' | 'classic-detail' | 'words' | 'words-practice' | 'grammar' | 'grammar-detail' | 'pastpaper' | 'pastpaper-quiz' | 'dialogue' | 'ancient-circle' | 'puzzle'
 
@@ -24,6 +23,7 @@ export default function LearnScreen() {
   const [selectedTextId, setSelectedTextId] = useState<string | null>(null)
   const [wordIndex, setWordIndex] = useState(0)
   const [showWordAnswer, setShowWordAnswer] = useState(false)
+  const [wrongOptions, setWrongOptions] = useState<string[]>([])
   const [grammarDetailId, setGrammarDetailId] = useState<number | null>(null)
   const [pastpaperYear, setPastpaperYear] = useState<number | null>(null)
   const [dialogueChar, setDialogueChar] = useState(ANCIENT_CHARACTERS[0])
@@ -194,7 +194,7 @@ export default function LearnScreen() {
               {WORD_CARDS.map((card, i) => (
                 <button
                   key={card.id}
-                  onClick={() => { setWordIndex(i); setShowWordAnswer(false); goTo('words-practice') }}
+                  onClick={() => { setWordIndex(i); setShowWordAnswer(false); setWrongOptions([]); goTo('words-practice') }}
                   className="card-ink p-3 text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex gap-3">
@@ -259,28 +259,52 @@ export default function LearnScreen() {
             <div className="grid grid-cols-2 gap-2">
               {card.options.map(opt => {
                 const isCorrect = showWordAnswer && card.correctAnswer.includes(opt)
+                const isWrong = wrongOptions.includes(opt)
+                const disabled = showWordAnswer
                 return (
                   <button
                     key={opt}
-                    onClick={() => setShowWordAnswer(true)}
-                    className="p-4 rounded-xl text-center text-sm font-medium transition-all duration-200 hover:-translate-y-0.5"
+                    onClick={() => {
+                      if (disabled) return
+                      if (card.correctAnswer.includes(opt)) {
+                        setShowWordAnswer(true)
+                        setWrongOptions([])
+                      } else {
+                        setWrongOptions(prev => [...prev, opt])
+                      }
+                    }}
+                    className={`p-4 rounded-xl text-center text-sm font-medium transition-all duration-200 ${
+                      disabled && !isCorrect ? 'opacity-50' : 'hover:-translate-y-0.5'
+                    } ${isWrong ? 'animate-pulse' : ''}`}
                     style={isCorrect
                       ? { borderColor: 'var(--jade)', background: 'var(--jade-light)', color: 'var(--jade)', border: '2px solid var(--jade)', boxShadow: '0 4px 12px rgba(26,107,74,0.15)' }
+                      : isWrong
+                      ? { borderColor: 'var(--vermillion)', background: 'rgba(187,90,90,0.06)', color: 'var(--vermillion)', border: '1.5px solid var(--vermillion)' }
                       : { border: '1px solid rgba(31,26,20,0.1)', background: '#fff', color: 'var(--ink)' }
                     }
                   >
                     {opt}
                     {isCorrect && <span className="ml-1">✓</span>}
+                    {isWrong && <span className="ml-1">✗</span>}
                   </button>
                 )
               })}
             </div>
+
+            {wrongOptions.length > 0 && !showWordAnswer && (
+              <p className="text-xs text-center" style={{ color: 'var(--vermillion)' }}>
+                不對哦，再試試！
+              </p>
+            )}
 
             {showWordAnswer && (
               <div
                 className="rounded-2xl p-4 space-y-2"
                 style={{ background: 'var(--jade-light)', border: '1px solid rgba(26,107,74,0.15)' }}
               >
+                <p className="text-sm font-semibold" style={{ color: 'var(--jade)' }}>
+                  {wrongOptions.length > 0 ? '終於答對了！' : '答對了！'}
+                </p>
                 <p className="text-sm font-semibold" style={{ color: 'var(--jade)' }}>解析</p>
                 <p className="text-xs leading-relaxed" style={{ color: 'rgba(31,26,20,0.55)' }}>{card.explanation}</p>
                 <div className="flex items-start gap-2 rounded-xl p-3" style={{ background: 'rgba(200,164,92,0.1)' }}>
@@ -290,7 +314,7 @@ export default function LearnScreen() {
                 <div className="flex gap-2 pt-1">
                   {wordIndex < WORD_CARDS.length - 1 && (
                     <button
-                      onClick={() => { setWordIndex(i => i + 1); setShowWordAnswer(false) }}
+                      onClick={() => { setWordIndex(i => i + 1); setShowWordAnswer(false); setWrongOptions([]) }}
                       className="flex-1 py-2.5 rounded-xl text-white text-xs font-medium transition-all hover:scale-105"
                       style={{ background: 'var(--jade)' }}
                     >
@@ -298,7 +322,7 @@ export default function LearnScreen() {
                     </button>
                   )}
                   <button
-                    onClick={() => { goBack(); setShowWordAnswer(false) }}
+                    onClick={() => { goBack(); setShowWordAnswer(false); setWrongOptions([]) }}
                     className="py-2.5 px-4 rounded-xl text-xs transition-all"
                     style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)' }}
                   >
