@@ -5,11 +5,14 @@ import TopBar from '../components/TopBar'
 import { KNOWLEDGE_POINTS } from '../data/mockData'
 import { buildKnowledgeGraph } from '../core/knowledge'
 
+type Pos = { x: number; y: number }
+
 export default function KnowledgeScreen() {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<'card' | 'graph'>('card')
   const [searchQuery, setSearchQuery] = useState('')
+  const [nodePositions, setNodePositions] = useState<Record<string, Pos>>({})
   const canvasRef = useRef<HTMLDivElement>(null)
 
   const filtered = KNOWLEDGE_POINTS.filter(k =>
@@ -26,12 +29,16 @@ export default function KnowledgeScreen() {
     const cx = w / 2
     const cy = h / 2
     const radius = Math.min(w, h) / 2 - 40
+    const positions: Record<string, Pos> = {}
     graph.nodes.forEach((node, i) => {
       const angle = (2 * Math.PI * i) / graph.nodes.length - Math.PI / 2
-      node.x = cx + radius * Math.cos(angle)
-      node.y = cy + radius * Math.sin(angle)
+      positions[node.id] = {
+        x: cx + radius * Math.cos(angle),
+        y: cy + radius * Math.sin(angle),
+      }
     })
-  }, [viewMode, graph])
+    setNodePositions(positions)
+  }, [viewMode])
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--paper)' }}>
@@ -139,18 +146,20 @@ export default function KnowledgeScreen() {
             <div ref={canvasRef} className="relative" style={{ height: '360px' }}>
               <svg width="100%" height="360" className="absolute inset-0">
                 {graph.links.map((link, i) => {
-                  const s = graph.nodes.find(n => n.id === link.source)
-                  const t = graph.nodes.find(n => n.id === link.target)
-                  if (!s?.x || !t?.x) return null
+                  const s = nodePositions[link.source]
+                  const t = nodePositions[link.target]
+                  if (!s || !t) return null
                   return <line key={i} x1={s.x} y1={s.y} x2={t.x} y2={t.y} stroke="rgba(31,26,20,0.08)" strokeWidth={1} />
                 })}
               </svg>
-              {graph.nodes.map(node => (
+              {graph.nodes.map(node => {
+                const pos = nodePositions[node.id]
+                return (
                 <button
                   key={node.id}
                   onClick={() => { setSelectedId(node.id); setViewMode('card') }}
                   className="absolute transform -translate-x-1/2 -translate-y-1/2 text-center group"
-                  style={{ left: node.x || 0, top: node.y || 0 }}
+                  style={{ left: pos?.x || 0, top: pos?.y || 0, opacity: pos ? 1 : 0 }}
                 >
                   <div
                     className="rounded-full transition-transform group-hover:scale-110"
@@ -170,7 +179,8 @@ export default function KnowledgeScreen() {
                     </span>
                   </div>
                 </button>
-              ))}
+                )
+              })}
             </div>
             <p className="text-xs text-center mt-2" style={{ color: 'rgba(31,26,20,0.25)' }}>
               节点大小 = 错题数量 · 颜色 = 掌握度 · 点击查看详情
