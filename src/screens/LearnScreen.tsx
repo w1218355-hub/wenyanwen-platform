@@ -99,13 +99,50 @@ export default function LearnScreen() {
         {/* ===== 經典篇章 ===== */}
         {page === 'classic' && (
           <div className="space-y-2.5">
-            {DSE_TEXTS.map(text => (
-              <button key={text.id} onClick={() => { setSelectedTextId(text.id); setPage('classic-detail') }}
-                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
-                <div className="flex items-center justify-between"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{text.title}</p><span className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>{text.dynasty}</span></div>
-                <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.45)' }}>{text.author} · {text.themes.join('、')}</p>
-              </button>
-            ))}
+            <p className="text-xs tracking-wider" style={{ color: 'rgba(31,26,20,0.35)', textTransform: 'uppercase' }}>
+              12篇DSE指定篇章
+            </p>
+            {DSE_TEXTS.map((text, i) => {
+              const themeColors = [
+                'var(--jade)', '#5b8cbf', '#d4a853', '#c75b5b',
+                '#b06ab3', '#8b5e3c', '#5cad8a', '#c8a45c',
+                '#5685c9', '#b55b5b', '#6b9e7a', '#9b7ec4',
+              ]
+              const accent = themeColors[i % themeColors.length]
+              return (
+                <button
+                  key={text.id}
+                  onClick={() => { setSelectedTextId(text.id); setPage('classic-detail') }}
+                  className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Number badge */}
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                      style={{ background: `${accent}15`, color: accent }}
+                    >
+                      {i + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>{text.title}</p>
+                        <span
+                          className="text-[10px] px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
+                          style={{ background: `${accent}10`, color: accent }}
+                        >
+                          {text.dynasty}
+                        </span>
+                      </div>
+                      <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>
+                        {text.author}
+                        <span className="mx-1.5" style={{ color: 'rgba(31,26,20,0.2)' }}>·</span>
+                        {text.themes.slice(0, 3).join(' · ')}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         )}
         {page === 'classic-detail' && selectedTextId && (() => { const t = DSE_TEXTS.find(x => x.id === selectedTextId)!; return (
@@ -121,45 +158,164 @@ export default function LearnScreen() {
         {/* ===== 實詞虛詞 ===== */}
         {page === 'words' && (
           <div className="space-y-2.5">
-            <div className="flex gap-2 mb-2">{['全部', '實詞', '虛詞'].map(cat => <button key={cat} className="text-xs px-3 py-1.5 rounded-full" style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)', background: '#fff' }}>{cat}</button>)}</div>
-            {WORD_CARDS.map((card, i) => (
-              <button key={card.id} onClick={() => { setWordIndex(i); setShowWordAnswer(false); setPage('words-practice') }}
-                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
-                <div className="flex items-center justify-between"><span className="text-xs px-2 py-0.5 rounded-full" style={{ background: card.category === '實詞' ? 'rgba(200,164,92,0.15)' : 'rgba(26,107,74,0.1)', color: card.category === '實詞' ? 'var(--gold)' : 'var(--jade)' }}>{card.category}</span><span className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>#{card.id}</span></div>
-                <p className="text-lg font-bold mt-2" style={{ color: 'var(--ink)', fontFamily: 'serif' }}>{card.word}</p>
-                <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)', fontFamily: 'serif' }}>{card.sentence}</p>
-              </button>
-            ))}
+            <div className="flex gap-2 mb-2">
+              {['全部', '實詞', '虛詞'].map(cat => (
+                <button key={cat} className="text-xs px-3 py-1.5 rounded-full transition-all duration-200" style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)', background: '#fff' }}>
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <div className="grid gap-3">
+              {WORD_CARDS.map((card, i) => (
+                <button
+                  key={card.id}
+                  onClick={() => { setWordIndex(i); setShowWordAnswer(false); setPage('words-practice') }}
+                  className="card-ink p-3 text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div className="flex gap-3">
+                    {/* Image */}
+                    <div
+                      className="w-16 h-16 rounded-xl flex-shrink-0 overflow-hidden"
+                      style={{ background: 'var(--paper-deep)' }}
+                    >
+                      {card.image ? (
+                        <img src={card.image} alt={card.word} className="w-full h-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center" style={{ background: 'rgba(26,107,74,0.06)' }}>
+                          <span className="text-2xl font-bold font-serif" style={{ color: 'var(--jade)' }}>{card.word}</span>
+                        </div>
+                      )}
+                    </div>
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded-full"
+                          style={{
+                            background: card.category === '實詞' ? 'rgba(200,164,92,0.15)' : 'rgba(26,107,74,0.1)',
+                            color: card.category === '實詞' ? 'var(--gold)' : 'var(--jade)',
+                          }}
+                        >
+                          {card.category}
+                        </span>
+                        <span className="text-[10px]" style={{ color: 'rgba(31,26,20,0.25)' }}>#{card.id}</span>
+                      </div>
+                      <p className="text-lg font-bold font-serif" style={{ color: 'var(--ink)' }}>{card.word}</p>
+                      <p className="text-xs mt-0.5 font-serif truncate" style={{ color: 'rgba(31,26,20,0.4)' }}>{card.sentence}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         )}
         {page === 'words-practice' && (() => { const card = WORD_CARDS[wordIndex]; return (
           <div className="space-y-4">
-            <div className="card-ink p-5 text-center"><p className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>{card.category} · #{card.id}</p><p className="text-3xl font-bold mt-4 mb-2" style={{ color: 'var(--ink)', fontFamily: 'serif' }}>{card.word}</p><p className="text-sm" style={{ color: 'rgba(31,26,20,0.5)', fontFamily: 'serif' }}>{card.sentence}</p></div>
+            {/* Word card with image */}
+            <div className="card-ink overflow-hidden">
+              {card.image && (
+                <div className="w-full aspect-[16/9] relative overflow-hidden" style={{ background: 'var(--paper-deep)' }}>
+                  <img src={card.image} alt={card.word} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.3), transparent 40%)' }} />
+                </div>
+              )}
+              <div className="p-5 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: card.category === '實詞' ? 'rgba(200,164,92,0.15)' : 'rgba(26,107,74,0.1)', color: card.category === '實詞' ? 'var(--gold)' : 'var(--jade)' }}>{card.category}</span>
+                  <span className="text-[10px]" style={{ color: 'rgba(31,26,20,0.25)' }}>#{card.id}</span>
+                </div>
+                <p className="text-4xl font-black mt-3 mb-2 tracking-wider" style={{ color: 'var(--ink)', fontFamily: '"Noto Serif SC", "STSong", "Songti SC", serif' }}>{card.word}</p>
+                <p className="text-sm font-serif" style={{ color: 'rgba(31,26,20,0.5)' }}>{card.sentence}</p>
+              </div>
+            </div>
+
             <p className="text-xs text-center" style={{ color: 'rgba(31,26,20,0.4)' }}>選擇正確的釋義</p>
-            <div className="space-y-2">{card.options.map(opt => (
-              <button key={opt} onClick={() => setShowWordAnswer(true)}
-                className={`w-full p-3 rounded-xl text-left text-sm transition-all ${showWordAnswer && card.correctAnswer.includes(opt) ? 'border-2' : 'border'} `}
-                style={showWordAnswer && card.correctAnswer.includes(opt) ? { borderColor: 'var(--jade)', background: 'var(--jade-light)', color: 'var(--jade)' } : { borderColor: 'rgba(31,26,20,0.1)', background: '#fff', color: 'var(--ink)' }}>
-                {opt}{showWordAnswer && card.correctAnswer.includes(opt) && <span className="float-right">✓</span>}
-              </button>
-            ))}</div>
-            {showWordAnswer && <div className="card-ink p-4"><p className="text-xs font-medium" style={{ color: 'var(--jade)' }}>解析</p><p className="text-xs mt-1 leading-relaxed" style={{ color: 'rgba(31,26,20,0.55)' }}>{card.explanation}</p><p className="text-xs mt-2" style={{ color: 'var(--gold)' }}>💡 {card.memoryTip}</p>
-              <div className="flex gap-2 mt-3">{wordIndex < WORD_CARDS.length - 1 && <button onClick={() => { setWordIndex(i => i + 1); setShowWordAnswer(false) }} className="flex-1 py-2 rounded-lg text-white text-xs" style={{ background: 'var(--jade)' }}>下一詞 →</button>}
-              <button onClick={() => { setPage('words'); setShowWordAnswer(false) }} className="py-2 px-4 rounded-lg text-xs" style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)' }}>返回列表</button></div></div>}
+
+            <div className="grid grid-cols-2 gap-2">
+              {card.options.map(opt => {
+                const isCorrect = showWordAnswer && card.correctAnswer.includes(opt)
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => setShowWordAnswer(true)}
+                    className="p-4 rounded-xl text-center text-sm font-medium transition-all duration-200 hover:-translate-y-0.5"
+                    style={isCorrect
+                      ? { borderColor: 'var(--jade)', background: 'var(--jade-light)', color: 'var(--jade)', border: '2px solid var(--jade)', boxShadow: '0 4px 12px rgba(26,107,74,0.15)' }
+                      : { border: '1px solid rgba(31,26,20,0.1)', background: '#fff', color: 'var(--ink)' }
+                    }
+                  >
+                    {opt}
+                    {isCorrect && <span className="ml-1">✓</span>}
+                  </button>
+                )
+              })}
+            </div>
+
+            {showWordAnswer && (
+              <div
+                className="rounded-2xl p-4 space-y-2"
+                style={{ background: 'var(--jade-light)', border: '1px solid rgba(26,107,74,0.15)' }}
+              >
+                <p className="text-sm font-semibold" style={{ color: 'var(--jade)' }}>解析</p>
+                <p className="text-xs leading-relaxed" style={{ color: 'rgba(31,26,20,0.55)' }}>{card.explanation}</p>
+                <div className="flex items-start gap-2 rounded-xl p-3" style={{ background: 'rgba(200,164,92,0.1)' }}>
+                  <span className="text-sm">💡</span>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--gold)' }}>{card.memoryTip}</p>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  {wordIndex < WORD_CARDS.length - 1 && (
+                    <button
+                      onClick={() => { setWordIndex(i => i + 1); setShowWordAnswer(false) }}
+                      className="flex-1 py-2.5 rounded-xl text-white text-xs font-medium transition-all hover:scale-105"
+                      style={{ background: 'var(--jade)' }}
+                    >
+                      下一詞 →
+                    </button>
+                  )}
+                  <button
+                    onClick={() => { setPage('words'); setShowWordAnswer(false) }}
+                    className="py-2.5 px-4 rounded-xl text-xs transition-all"
+                    style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)' }}
+                  >
+                    返回列表
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )})()}
 
         {/* ===== 句式語法 ===== */}
         {page === 'grammar' && (
-          <div className="space-y-2.5">
-            {GRAMMAR_POINTS.map(g => (
-              <button key={g.id} onClick={() => { setGrammarDetailId(g.id); setPage('grammar-detail') }}
-                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
-                <div className="flex items-center justify-between"><span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(212,168,83,0.15)', color: '#d4a853' }}>{g.category}</span></div>
-                <p className="text-sm font-medium mt-2" style={{ color: 'var(--ink)' }}>{g.name}</p>
-                <p className="text-xs mt-1 line-clamp-2" style={{ color: 'rgba(31,26,20,0.45)' }}>{g.description}</p>
-              </button>
-            ))}
+          <div className="space-y-3">
+            {GRAMMAR_POINTS.map((g, i) => {
+              const colors = ['#d4a853', '#5b8cbf', '#c75b5b', '#5cad8a']
+              const accent = colors[i % colors.length]
+              return (
+                <button
+                  key={g.id}
+                  onClick={() => { setGrammarDetailId(g.id); setPage('grammar-detail') }}
+                  className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                      style={{ background: `${accent}12` }}
+                    >
+                      {['📐', '🔄', '📋', '↗️'][i]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: `${accent}15`, color: accent }}>{g.category}</span>
+                      </div>
+                      <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>{g.name}</p>
+                      <p className="text-xs mt-0.5 line-clamp-2" style={{ color: 'rgba(31,26,20,0.4)' }}>{g.description}</p>
+                    </div>
+                    <span className="text-lg" style={{ color: 'rgba(31,26,20,0.15)' }}>→</span>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         )}
         {page === 'grammar-detail' && grammarDetailId && (() => { const g = GRAMMAR_POINTS.find(x => x.id === grammarDetailId)!; return (
@@ -173,12 +329,38 @@ export default function LearnScreen() {
 
         {/* ===== 歷年真題 ===== */}
         {page === 'pastpaper' && (
-          <div className="space-y-2.5">
-            {PAST_PAPERS.map(pp => (
-              <button key={pp.year} onClick={() => { setPastpaperYear(pp.year); setPage('pastpaper-quiz') }}
-                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
-                <div className="flex items-center justify-between"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{pp.year}年</p><span className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>{pp.source}</span></div>
-                <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>{pp.questions.length} 題</p>
+          <div className="space-y-3">
+            <p className="text-xs tracking-wider" style={{ color: 'rgba(31,26,20,0.35)', textTransform: 'uppercase' }}>
+              DSE 歷年真題試卷
+            </p>
+            {PAST_PAPERS.map((pp, i) => (
+              <button
+                key={pp.year}
+                onClick={() => { setPastpaperYear(pp.year); setPage('pastpaper-quiz') }}
+                className="card-ink text-left w-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md overflow-hidden"
+              >
+                <div className="flex items-stretch">
+                  {/* Year badge */}
+                  <div
+                    className="flex items-center justify-center px-5 flex-shrink-0"
+                    style={{ background: i === 0 ? 'linear-gradient(180deg, var(--jade), #1f5c42)' : 'linear-gradient(180deg, #c75b5b, #a03d3d)' }}
+                  >
+                    <div className="text-center text-white">
+                      <p className="text-2xl font-black">{pp.year}</p>
+                      <p className="text-[10px] opacity-70 mt-0.5">DSE</p>
+                    </div>
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 p-4">
+                    <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>{pp.year}年 DSE 文言文試題</p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>{pp.source}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: 'rgba(31,26,20,0.04)', color: 'rgba(31,26,20,0.4)' }}>
+                        {pp.questions.length} 題
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </button>
             ))}
           </div>

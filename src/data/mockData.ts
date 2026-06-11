@@ -329,12 +329,12 @@ export interface WordCard {
 }
 
 export const WORD_CARDS: WordCard[] = [
-  { id: 1, category: '實詞', word: '厭', sentence: '何厭之有', image: '', options: ['滿足', '討厭', '厭倦', '嫌棄'], correctAnswer: ['滿足'], explanation: '"厭"在文言中常解作「滿足」，而非現代漢語的「討厭」。"何厭之有"意為「有什麼滿足的呢」，即「貪得無厭」。', memoryTip: '記住：古人說「厭」= 我們說「夠」。何厭之有 = 有什麼夠的呢？' },
-  { id: 2, category: '實詞', word: '師', sentence: '師者，所以傳道受業解惑也', image: '', options: ['老師', '軍隊', '學習', '效法'], correctAnswer: ['老師'], explanation: '"師"在《師說》中指名詞「老師」。注意與動詞用法「吾師道也」（我學習道理）區分。', memoryTip: '名詞→老師，動詞→學習。看前面有沒有主語來判斷。' },
-  { id: 3, category: '虛詞', word: '之', sentence: '句讀之不知', image: '', options: ['賓語前置標誌', '的', '代詞', '去、往'], correctAnswer: ['賓語前置標誌'], explanation: '"之"在此為賓語前置標誌，無實義。還原語序為「不知句讀」。', memoryTip: '動詞後面的「之」如果是賓語前置，把後面的名詞和前面的動詞對調就通了。' },
-  { id: 4, category: '虛詞', word: '而', sentence: '青，取之於藍而青於藍', image: '', options: ['但是', '而且', '然後', '因為'], correctAnswer: ['但是'], explanation: '"而"表轉折，相當於「但是」「卻」。前後形成對比關係。', memoryTip: '前後意思相反 → 轉折（但是）；前後意思相近 → 並列（而且）。' },
-  { id: 5, category: '虛詞', word: '於', sentence: '青，取之於藍', image: '', options: ['從', '在', '比', '對'], correctAnswer: ['從'], explanation: '"於"引進動作的起點，相當於「從」「自」。', memoryTip: '於 + 地點/來源 = 從。於 + 比較對象 = 比。' },
-  { id: 6, category: '實詞', word: '走', sentence: '兔走觸株', image: '', options: ['跑', '走路', '離開', '移動'], correctAnswer: ['跑'], explanation: '文言文中「走」= 現代漢語「跑」。「行」才等於現代的「走」。', memoryTip: '古文「走」= 跑步🏃，古文「行」= 走路🚶。' },
+  { id: 1, category: '實詞', word: '厭', sentence: '何厭之有', image: 'words/goude.png', options: ['滿足', '討厭', '厭倦', '嫌棄'], correctAnswer: ['滿足'], explanation: '"厭"在文言中常解作「滿足」，而非現代漢語的「討厭」。"何厭之有"意為「有什麼滿足的呢」，即「貪得無厭」。', memoryTip: '記住：古人說「厭」= 我們說「夠」。何厭之有 = 有什麼夠的呢？' },
+  { id: 2, category: '實詞', word: '師', sentence: '師者，所以傳道受業解惑也', image: 'words/shi.png', options: ['老師', '軍隊', '學習', '效法'], correctAnswer: ['老師'], explanation: '"師"在《師說》中指名詞「老師」。注意與動詞用法「吾師道也」（我學習道理）區分。', memoryTip: '名詞→老師，動詞→學習。看前面有沒有主語來判斷。' },
+  { id: 3, category: '虛詞', word: '之', sentence: '句讀之不知', image: 'words/zhi.png', options: ['賓語前置標誌', '的', '代詞', '去、往'], correctAnswer: ['賓語前置標誌'], explanation: '"之"在此為賓語前置標誌，無實義。還原語序為「不知句讀」。', memoryTip: '動詞後面的「之」如果是賓語前置，把後面的名詞和前面的動詞對調就通了。' },
+  { id: 4, category: '虛詞', word: '而', sentence: '青，取之於藍而青於藍', image: 'words/er.png', options: ['但是', '而且', '然後', '因為'], correctAnswer: ['但是'], explanation: '"而"表轉折，相當於「但是」「卻」。前後形成對比關係。', memoryTip: '前後意思相反 → 轉折（但是）；前後意思相近 → 並列（而且）。' },
+  { id: 5, category: '虛詞', word: '於', sentence: '青，取之於藍', image: 'words/yu.png', options: ['從', '在', '比', '對'], correctAnswer: ['從'], explanation: '"於"引進動作的起點，相當於「從」「自」。', memoryTip: '於 + 地點/來源 = 從。於 + 比較對象 = 比。' },
+  { id: 6, category: '實詞', word: '走', sentence: '兔走觸株', image: 'words/zou.png', options: ['跑', '走路', '離開', '移動'], correctAnswer: ['跑'], explanation: '文言文中「走」= 現代漢語「跑」。「行」才等於現代的「走」。', memoryTip: '古文「走」= 跑步🏃，古文「行」= 走路🚶。' },
 ]
 
 export interface GrammarPoint {
