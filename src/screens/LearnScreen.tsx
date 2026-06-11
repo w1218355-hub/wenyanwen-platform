@@ -203,34 +203,131 @@ export default function LearnScreen() {
           <div className="space-y-4">
             {dialogueMessages.length === 0 ? (
               <>
-                <div className="card-ink p-5"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>選擇一位古人，開始對話</p><p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>AI將以古人的身份和語氣與你交流</p></div>
-                <div className="space-y-2">{ANCIENT_CHARACTERS.map(c => (
-                  <button key={c.id} onClick={() => { setDialogueChar(c); setDialogueMessages([{ from: 'ai', text: c.greeting }]) }}
-                    className="card-ink p-4 text-left w-full flex items-center gap-3 transition-all duration-300 hover:-translate-y-0.5">
-                    <span className="text-2xl">{c.avatar}</span>
-                    <div><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{c.name}</p><p className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>{c.dynasty} · {DSE_TEXTS.find(t => t.id === c.textId)?.title}</p></div>
-                  </button>
-                ))}</div>
+                <div
+                  className="rounded-2xl p-5 text-center"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(176,106,179,0.06) 0%, rgba(200,164,92,0.06) 100%)',
+                    border: '1px solid rgba(176,106,179,0.12)',
+                  }}
+                >
+                  <p className="text-4xl mb-3">⏳</p>
+                  <p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>跨越千年，與古人對話</p>
+                  <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>AI將以古人的身份和語氣與你交流，代入共情法理解深層情感</p>
+                </div>
+                <div className="grid gap-2">
+                  {ANCIENT_CHARACTERS.map(c => (
+                    <button
+                      key={c.id}
+                      onClick={() => { setDialogueChar(c); setDialogueMessages([{ from: 'ai', text: c.greeting }]) }}
+                      className="rounded-2xl p-4 text-left w-full flex items-center gap-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                      style={{
+                        background: 'linear-gradient(135deg, #fff 0%, rgba(200,164,92,0.04) 100%)',
+                        border: '1px solid rgba(31,26,20,0.06)',
+                      }}
+                    >
+                      <div
+                        className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                        style={{ background: 'rgba(200,164,92,0.12)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
+                      >
+                        {c.avatar}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>{c.name}</p>
+                        <p className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>
+                          {c.dynasty} · {DSE_TEXTS.find(t => t.id === c.textId)?.title || '經典名篇'}
+                        </p>
+                      </div>
+                      <span className="text-xs px-2 py-1 rounded-full" style={{ background: 'rgba(176,106,179,0.08)', color: '#b06ab3' }}>
+                        對話 →
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </>
             ) : (
               <>
-                <div className="card-ink p-3 flex items-center gap-3">
-                  <span className="text-xl">{dialogueChar.avatar}</span>
-                  <div><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{dialogueChar.name}</p><p className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>{dialogueChar.dynasty}</p></div>
-                  <button onClick={() => { setDialogueMessages([]); setDialogueInput('') }} className="ml-auto text-xs" style={{ color: 'rgba(31,26,20,0.4)' }}>換人</button>
-                </div>
-                <div className="space-y-3">{dialogueMessages.map((m, i) => (
-                  <div key={i} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${m.from === 'user' ? 'text-white rounded-br-md' : 'border rounded-bl-md'}`}
-                      style={m.from === 'user' ? { background: 'var(--jade)' } : { background: '#fff', borderColor: 'rgba(31,26,20,0.08)', color: 'var(--ink)' }}>
-                      {m.from === 'ai' && <span className="mr-1">{dialogueChar.avatar} </span>}{m.text}
-                    </div>
+                {/* Chat header */}
+                <div
+                  className="rounded-2xl p-3 flex items-center gap-3 sticky top-0 z-10"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(176,106,179,0.08), rgba(200,164,92,0.06))',
+                    border: '1px solid rgba(176,106,179,0.1)',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg" style={{ background: 'rgba(255,255,255,0.6)' }}>
+                    {dialogueChar.avatar}
                   </div>
-                ))}</div>
-                <div className="flex gap-2"><input value={dialogueInput} onChange={e => setDialogueInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && dialogueInput.trim()) { setDialogueMessages(prev => [...prev, { from: 'user', text: dialogueInput }]); setDialogueInput(''); setTimeout(() => setDialogueMessages(prev => [...prev, { from: 'ai', text: '善哉！此問甚好。' + dialogueChar.name + '撫鬚而思……（此為展示模式，API接入後將實現真實對話）' }]), 800) } }}
-                  placeholder="輸入你的問題..." className="flex-1 px-4 py-2.5 rounded-xl text-sm" style={{ border: '1px solid rgba(31,26,20,0.1)', background: '#fff', outline: 'none' }} />
-                  <button className="px-4 py-2.5 rounded-xl text-white text-sm" style={{ background: 'var(--jade)' }} onClick={() => { if (dialogueInput.trim()) { setDialogueMessages(prev => [...prev, { from: 'user', text: dialogueInput }]); setDialogueInput(''); setTimeout(() => setDialogueMessages(prev => [...prev, { from: 'ai', text: '此問題頗有見地。待我細細道來……（API接入後將實現真實對話）' }]), 800) } }}>發送</button></div>
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>{dialogueChar.name}</p>
+                    <p className="text-[10px]" style={{ color: 'rgba(31,26,20,0.35)' }}>{dialogueChar.dynasty} · 正在線</p>
+                  </div>
+                  <button
+                    onClick={() => { setDialogueMessages([]); setDialogueInput('') }}
+                    className="ml-auto text-xs px-3 py-1 rounded-full transition-all hover:scale-105"
+                    style={{ background: 'rgba(31,26,20,0.04)', color: 'rgba(31,26,20,0.5)' }}
+                  >
+                    換人
+                  </button>
+                </div>
+
+                {/* Messages */}
+                <div className="space-y-3 min-h-[50vh]">
+                  {dialogueMessages.map((m, i) => (
+                    <div key={i} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      {m.from === 'ai' && (
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm mr-2 mt-1 flex-shrink-0" style={{ background: 'rgba(176,106,179,0.1)' }}>
+                          {dialogueChar.avatar}
+                        </div>
+                      )}
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                          m.from === 'user' ? 'rounded-br-md' : 'rounded-bl-md'
+                        }`}
+                        style={m.from === 'user'
+                          ? { background: 'linear-gradient(135deg, #1a6b4a, #1f5c42)', color: '#fff', boxShadow: '0 2px 8px rgba(26,107,74,0.2)' }
+                          : { background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(31,26,20,0.06)', color: 'var(--ink)', boxShadow: '0 1px 4px rgba(0,0,0,0.02)' }
+                        }
+                      >
+                        {m.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Input */}
+                <div
+                  className="flex gap-2 p-2 rounded-2xl"
+                  style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(31,26,20,0.08)', boxShadow: '0 -2px 12px rgba(0,0,0,0.02)' }}
+                >
+                  <input
+                    value={dialogueInput}
+                    onChange={e => setDialogueInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && dialogueInput.trim()) {
+                        setDialogueMessages(prev => [...prev, { from: 'user', text: dialogueInput }])
+                        setDialogueInput('')
+                        setTimeout(() => setDialogueMessages(prev => [...prev, { from: 'ai', text: '善哉！此問甚好。' + dialogueChar.name + '撫鬚而思……（此為展示模式，API接入後將實現真實對話）' }]), 800)
+                      }
+                    }}
+                    placeholder={`問${dialogueChar.name}一個問題...`}
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm bg-transparent"
+                    style={{ outline: 'none', border: 'none' }}
+                  />
+                  <button
+                    className="px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+                    style={{ background: 'linear-gradient(135deg, #b06ab3, #8b5e8c)', boxShadow: '0 2px 8px rgba(176,106,179,0.3)' }}
+                    onClick={() => {
+                      if (dialogueInput.trim()) {
+                        setDialogueMessages(prev => [...prev, { from: 'user', text: dialogueInput }])
+                        setDialogueInput('')
+                        setTimeout(() => setDialogueMessages(prev => [...prev, { from: 'ai', text: '此問題頗有見地。待我細細道來……（API接入後將實現真實對話）' }]), 800)
+                      }
+                    }}
+                  >
+                    發送
+                  </button>
+                </div>
               </>
             )}
           </div>
@@ -239,11 +336,68 @@ export default function LearnScreen() {
         {/* ===== 古人圈 ===== */}
         {page === 'ancient-circle' && (
           <div className="space-y-3">
-            {ANCIENT_POSTS.map(post => (
-              <div key={post.id} className="card-ink p-4">
-                <div className="flex items-center gap-3 mb-3"><span className="text-2xl">{post.author.avatar}</span><div><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{post.author.name}</p><p className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>{post.author.dynasty} · {post.time}</p></div></div>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--ink)', fontFamily: 'serif' }}>{post.content}</p>
-                <div className="flex gap-4 mt-3 text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}><span>❤️ {post.likes}</span><span>💬 {post.comments}</span></div>
+            {ANCIENT_POSTS.map((post, i) => (
+              <div
+                key={post.id}
+                className="rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                style={{
+                  background: `linear-gradient(135deg, ${post.gradientFrom}, ${post.gradientTo})`,
+                  border: `1px solid ${post.borderColor}`,
+                  transform: i % 2 === 1 ? 'translateX(4px)' : 'translateX(-2px)',
+                }}
+              >
+                {/* Author header */}
+                <div className="flex items-center gap-3 p-4 pb-2">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0"
+                    style={{ background: 'rgba(255,255,255,0.7)', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+                  >
+                    {post.author.avatar}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold" style={{ color: post.textColor }}>{post.author.name}</p>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.6)', color: post.textColor, opacity: 0.7 }}>
+                        {post.author.dynasty}
+                      </span>
+                    </div>
+                    <p className="text-[10px] mt-0.5" style={{ color: post.textColor, opacity: 0.5 }}>{post.time}</p>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="px-4 pb-3">
+                  <p
+                    className="text-sm leading-relaxed tracking-wide"
+                    style={{ color: post.textColor, fontFamily: '"Noto Serif SC", "STSong", "Songti SC", serif', opacity: 0.9 }}
+                  >
+                    {post.content}
+                  </p>
+                </div>
+
+                {/* Like/Comment bar */}
+                <div className="flex items-center justify-between px-4 py-2" style={{ background: 'rgba(255,255,255,0.35)' }}>
+                  <div className="flex gap-4">
+                    <button className="flex items-center gap-1 text-xs transition-all hover:scale-110" style={{ color: post.textColor, opacity: 0.7 }}>
+                      <span className="text-sm">❤️</span> {post.likes}
+                    </button>
+                    <button className="flex items-center gap-1 text-xs transition-all hover:scale-110" style={{ color: post.textColor, opacity: 0.7 }}>
+                      <span className="text-sm">💬</span> {post.comments}
+                    </button>
+                  </div>
+                  <span className="text-[10px]" style={{ color: post.textColor, opacity: 0.4 }}>文言朋友圈</span>
+                </div>
+
+                {/* Comments preview */}
+                {post.commentList && post.commentList.length > 0 && (
+                  <div className="px-4 py-2 space-y-1.5" style={{ background: 'rgba(255,255,255,0.5)' }}>
+                    {post.commentList.map((c, ci) => (
+                      <p key={ci} className="text-[11px] leading-relaxed" style={{ color: post.textColor, opacity: 0.6 }}>
+                        <span className="font-medium" style={{ opacity: 0.8 }}>{c.name}</span>：{c.text}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -252,17 +406,112 @@ export default function LearnScreen() {
         {/* ===== 拼句遊戲 ===== */}
         {page === 'puzzle' && (
           <div className="space-y-4">
-            <div className="card-ink p-5 text-center"><p className="text-xs" style={{ color: 'rgba(31,26,20,0.4)' }}>按正確順序排列</p><p className="text-xs mt-2" style={{ color: 'var(--gold)' }}>提示：{puzzleSentence.hint}</p></div>
+            {/* Hint card */}
+            <div
+              className="rounded-2xl p-5 text-center"
+              style={{
+                background: 'linear-gradient(135deg, rgba(92,173,138,0.06), rgba(200,164,92,0.06))',
+                border: '1px solid rgba(92,173,138,0.12)',
+              }}
+            >
+              <p className="text-3xl mb-2">🧩</p>
+              <p className="text-xs tracking-wider uppercase" style={{ color: 'rgba(31,26,20,0.35)' }}>重組文言名句</p>
+              <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(200,164,92,0.1)' }}>
+                <span className="text-xs" style={{ color: 'var(--gold)' }}>💡 提示</span>
+                <span className="text-sm font-serif" style={{ color: 'var(--ink)' }}>{puzzleSentence.hint}</span>
+              </div>
+            </div>
+
+            {/* Answer slots */}
             <div className="flex flex-wrap gap-2 justify-center">
               {puzzlePieces.map((char, i) => (
-                <button key={i} onClick={() => { const newPieces = [...puzzlePieces]; newPieces.splice(i, 1); newPieces.push(char); setPuzzlePieces(newPieces); if (newPieces.join('') === puzzleSentence.original) setPuzzleSolved(true) }}
-                  className="w-12 h-12 rounded-xl text-lg font-bold flex items-center justify-center transition-all hover:-translate-y-0.5"
-                  style={{ background: '#fff', border: '1px solid rgba(31,26,20,0.1)', color: 'var(--ink)', fontFamily: 'serif' }}>{char}</button>
+                <button
+                  key={i}
+                  onClick={() => {
+                    const newPieces = [...puzzlePieces]
+                    newPieces.splice(i, 1)
+                    newPieces.push(char)
+                    setPuzzlePieces(newPieces)
+                    if (newPieces.join('') === puzzleSentence.original) setPuzzleSolved(true)
+                  }}
+                  className="w-14 h-14 rounded-xl text-xl font-bold flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:shadow-lg active:scale-90"
+                  style={{
+                    background: puzzleSolved
+                      ? 'linear-gradient(135deg, #1a6b4a, #1f5c42)'
+                      : 'linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.9) 100%)',
+                    border: puzzleSolved ? '2px solid var(--jade)' : '1px solid rgba(31,26,20,0.1)',
+                    color: puzzleSolved ? '#fff' : 'var(--ink)',
+                    fontFamily: '"Noto Serif SC", "STSong", "Songti SC", serif',
+                    boxShadow: puzzleSolved
+                      ? '0 4px 16px rgba(26,107,74,0.3)'
+                      : '0 2px 8px rgba(0,0,0,0.06)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {char}
+                </button>
               ))}
             </div>
-            {puzzleSolved && <div className="card-ink p-4 text-center" style={{ borderColor: 'var(--jade)' }}><p className="text-sm font-bold" style={{ color: 'var(--jade)' }}>🎉 拼對了！</p><p className="text-lg mt-2 font-serif" style={{ color: 'var(--ink)' }}>{puzzleSentence.original}</p>
-              <button onClick={() => { const next = PUZZLE_SENTENCES[(PUZZLE_SENTENCES.indexOf(puzzleSentence) + 1) % PUZZLE_SENTENCES.length]; setPuzzleSentence(next); startPuzzle() }} className="mt-3 px-4 py-2 rounded-lg text-white text-xs" style={{ background: 'var(--jade)' }}>下一句 →</button></div>}
-            <button onClick={startPuzzle} className="w-full py-2 rounded-lg text-xs" style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)' }}>重新排列</button>
+
+            {/* Solved state */}
+            {puzzleSolved && (
+              <div
+                className="rounded-2xl p-5 text-center animate-pulse"
+                style={{
+                  background: 'linear-gradient(135deg, var(--jade-light), rgba(26,107,74,0.05))',
+                  border: '2px solid var(--jade)',
+                }}
+              >
+                <p className="text-2xl mb-2">🎉</p>
+                <p className="text-sm font-bold" style={{ color: 'var(--jade)' }}>拼對了！</p>
+                <p
+                  className="text-2xl mt-3 font-bold tracking-wider"
+                  style={{ color: 'var(--ink)', fontFamily: '"Noto Serif SC", "STSong", "Songti SC", serif' }}
+                >
+                  {puzzleSentence.original}
+                </p>
+                <p className="text-xs mt-2" style={{ color: 'rgba(31,26,20,0.4)' }}>{puzzleSentence.hint}</p>
+                <button
+                  onClick={() => {
+                    const next = PUZZLE_SENTENCES[(PUZZLE_SENTENCES.indexOf(puzzleSentence) + 1) % PUZZLE_SENTENCES.length]
+                    setPuzzleSentence(next)
+                    startPuzzle()
+                  }}
+                  className="mt-4 px-6 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+                  style={{ background: 'var(--jade)', boxShadow: '0 4px 14px rgba(26,107,74,0.25)' }}
+                >
+                  下一句 →
+                </button>
+              </div>
+            )}
+
+            {/* Controls */}
+            {!puzzleSolved && (
+              <div className="flex gap-2">
+                <button
+                  onClick={startPuzzle}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 hover:-translate-y-0.5"
+                  style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)', background: '#fff' }}
+                >
+                  🔀 重新排列
+                </button>
+                <button
+                  onClick={() => {
+                    setPuzzlePieces(puzzleSentence.original.split(''))
+                    setPuzzleSolved(true)
+                  }}
+                  className="py-2.5 px-4 rounded-xl text-xs transition-all duration-200"
+                  style={{ border: '1px solid rgba(31,26,20,0.08)', color: 'rgba(31,26,20,0.3)', background: 'transparent' }}
+                >
+                  看答案
+                </button>
+              </div>
+            )}
+
+            {/* Instructions */}
+            <p className="text-center text-[10px]" style={{ color: 'rgba(31,26,20,0.2)' }}>
+              點擊字塊可移動到最後 · 直到排列出正確名句
+            </p>
           </div>
         )}
       </div>

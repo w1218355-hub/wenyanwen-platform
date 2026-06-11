@@ -392,13 +392,89 @@ export interface AncientPost {
   likes: number
   comments: number
   time: string
+  gradientFrom: string
+  gradientTo: string
+  borderColor: string
+  textColor: string
+  commentList?: { name: string; text: string }[]
 }
 
 export const ANCIENT_POSTS: AncientPost[] = [
-  { id: 1, author: ANCIENT_CHARACTERS[0], content: '今日與弟子論「學而不思則罔，思而不學則殆」，諸君以為然否？', likes: 245, comments: 18, time: '2小時前' },
-  { id: 2, author: ANCIENT_CHARACTERS[2], content: '夢中化蝶，醒來不知自己是莊周還是蝴蝶。萬物本一，何來物我之分？', likes: 189, comments: 32, time: '5小時前' },
-  { id: 3, author: ANCIENT_CHARACTERS[1], content: '感概世人恥學於師，故作《師說》以警之。學無常師，道之所存，師之所存也。', likes: 312, comments: 25, time: '1天前' },
-  { id: 4, author: ANCIENT_CHARACTERS[4], content: '夜遊赤壁，清風徐來，水波不興。舉酒屬客，誦明月之詩，歌窈窕之章。', likes: 278, comments: 15, time: '2天前' },
+  {
+    id: 1, author: ANCIENT_CHARACTERS[0],
+    content: '今日與弟子論「學而不思則罔，思而不學則殆」，諸君以為然否？',
+    likes: 245, comments: 3, time: '2小時前',
+    gradientFrom: '#fef3c7', gradientTo: '#fde68a', borderColor: '#fcd34d', textColor: '#92400e',
+    commentList: [
+      { name: '子路', text: '夫子之言，弟子謹記於心！' },
+      { name: '顏回', text: '學思並重，方能得其真義。' },
+    ],
+  },
+  {
+    id: 2, author: ANCIENT_CHARACTERS[2],
+    content: '夢中化蝶，醒來不知自己是莊周還是蝴蝶。萬物本一，何來物我之分？',
+    likes: 189, comments: 2, time: '5小時前',
+    gradientFrom: '#e0e7ff', gradientTo: '#c7d2fe', borderColor: '#a5b4fc', textColor: '#3730a3',
+    commentList: [
+      { name: '惠施', text: '子非蝶，安知蝶之樂？' },
+    ],
+  },
+  {
+    id: 3, author: ANCIENT_CHARACTERS[1],
+    content: '感概世人恥學於師，故作《師說》以警之。學無常師，道之所存，師之所存也。',
+    likes: 312, comments: 4, time: '1天前',
+    gradientFrom: '#dcfce7', gradientTo: '#bbf7d0', borderColor: '#86efac', textColor: '#166534',
+    commentList: [
+      { name: '柳宗元', text: '退之此文，振聾發聵！' },
+      { name: '歐陽修', text: '師道之不傳也久矣，退之說得極是。' },
+    ],
+  },
+  {
+    id: 4, author: ANCIENT_CHARACTERS[4],
+    content: '夜遊赤壁，清風徐來，水波不興。舉酒屬客，誦明月之詩，歌窈窕之章。',
+    likes: 278, comments: 3, time: '2天前',
+    gradientFrom: '#fce7f3', gradientTo: '#fbcfe8', borderColor: '#f9a8d4', textColor: '#9d174d',
+    commentList: [
+      { name: '黃庭堅', text: '東坡此賦，千古絕唱！' },
+    ],
+  },
+  {
+    id: 5, author: { name: '李白', dynasty: '唐', avatar: '🍶', textId: '', greeting: '' },
+    content: '舉頭望明月，低頭思故鄉。今夜月色如霜，不知故鄉親友是否安好？',
+    likes: 512, comments: 6, time: '3小時前',
+    gradientFrom: '#fef3c7', gradientTo: '#fde68a', borderColor: '#fcd34d', textColor: '#92400e',
+    commentList: [
+      { name: '杜甫', text: '太白兄，何時歸來共飲？' },
+      { name: '孟浩然', text: '月是故鄉明，情是故人深。' },
+    ],
+  },
+  {
+    id: 6, author: { name: '陶淵明', dynasty: '東晉', avatar: '🌿', textId: '', greeting: '' },
+    content: '采菊東籬下，悠然見南山。山氣日夕佳，飛鳥相與還。此中有真意，欲辯已忘言。',
+    likes: 367, comments: 4, time: '1天前',
+    gradientFrom: '#ecfccb', gradientTo: '#d9f99d', borderColor: '#bef264', textColor: '#3f6212',
+    commentList: [
+      { name: '謝靈運', text: '淵明之詩，自然天成！' },
+    ],
+  },
+  {
+    id: 7, author: { name: '范仲淹', dynasty: '北宋', avatar: '🏯', textId: '', greeting: '' },
+    content: '先天下之憂而憂，後天下之樂而樂。今日觀岳陽樓重修圖，感慨萬千，特此抒懷。',
+    likes: 423, comments: 5, time: '6小時前',
+    gradientFrom: '#e0f2fe', gradientTo: '#bae6fd', borderColor: '#7dd3fc', textColor: '#075985',
+    commentList: [
+      { name: '滕子京', text: '希文兄胸懷天下，令人敬佩！' },
+    ],
+  },
+  {
+    id: 8, author: { name: '歐陽修', dynasty: '北宋', avatar: '🍷', textId: '', greeting: '' },
+    content: '醉翁之意不在酒，在乎山水之間也。山水之樂，得之心而寓之酒也。',
+    likes: 198, comments: 2, time: '4天前',
+    gradientFrom: '#f1f5f9', gradientTo: '#e2e8f0', borderColor: '#cbd5e1', textColor: '#334155',
+    commentList: [
+      { name: '曾鞏', text: '永叔文章，如行雲流水！' },
+    ],
+  },
 ]
 
 export interface PuzzlePiece {
