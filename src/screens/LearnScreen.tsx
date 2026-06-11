@@ -1,0 +1,271 @@
+// ===== Learn Hub Screen =====
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import TopBar from '../components/TopBar'
+import { DSE_TEXTS, WORD_CARDS, GRAMMAR_POINTS, PAST_PAPERS, ANCIENT_CHARACTERS, ANCIENT_POSTS, PUZZLE_SENTENCES } from '../data/mockData'
+import type { WordCard } from '../data/mockData'
+
+type SubPage = 'hub' | 'classic' | 'classic-detail' | 'words' | 'words-practice' | 'grammar' | 'grammar-detail' | 'pastpaper' | 'pastpaper-quiz' | 'dialogue' | 'ancient-circle' | 'puzzle'
+
+const MODULES = [
+  { id: 'classic' as SubPage, emoji: '📜', title: '經典篇章', desc: '12篇DSE指定文言文，逐篇精讀', accent: 'var(--jade)' },
+  { id: 'words' as SubPage, emoji: '🔤', title: '實詞虛詞', desc: 'DSE常考詞彙、一詞多義、語境辨義', accent: '#5b8cbf' },
+  { id: 'grammar' as SubPage, emoji: '⚙️', title: '句式語法', desc: '判斷句、倒裝句、被動句系統歸納', accent: '#d4a853' },
+  { id: 'pastpaper' as SubPage, emoji: '📝', title: '歷年真題', desc: '按年份、篇章篩選DSE真題', accent: '#c75b5b' },
+  { id: 'dialogue' as SubPage, emoji: '🎭', title: '時空對話框', desc: '與古人對話，代入共情法理解深層情感', accent: '#b06ab3' },
+  { id: 'ancient-circle' as SubPage, emoji: '🏛️', title: '古人圈', desc: '古人朋友圈，用古人的視角看世界', accent: '#8b5e3c' },
+  { id: 'puzzle' as SubPage, emoji: '🧩', title: '拼句遊戲', desc: '重組文言句子，趣味記憶名句', accent: '#5cad8a' },
+]
+
+export default function LearnScreen() {
+  const navigate = useNavigate()
+  const [page, setPage] = useState<SubPage>('hub')
+  const [selectedTextId, setSelectedTextId] = useState<string | null>(null)
+  const [wordIndex, setWordIndex] = useState(0)
+  const [showWordAnswer, setShowWordAnswer] = useState(false)
+  const [grammarDetailId, setGrammarDetailId] = useState<number | null>(null)
+  const [pastpaperYear, setPastpaperYear] = useState<number | null>(null)
+  const [dialogueChar, setDialogueChar] = useState(ANCIENT_CHARACTERS[0])
+  const [dialogueMessages, setDialogueMessages] = useState<{ from: 'ai' | 'user'; text: string }[]>([])
+  const [dialogueInput, setDialogueInput] = useState('')
+  const [puzzleSentence, setPuzzleSentence] = useState(PUZZLE_SENTENCES[0])
+  const [puzzlePieces, setPuzzlePieces] = useState<string[]>([])
+  const [puzzleSolved, setPuzzleSolved] = useState(false)
+
+  const startPuzzle = () => {
+    const chars = puzzleSentence.original.split('')
+    const shuffled = [...chars].sort(() => Math.random() - 0.5)
+    setPuzzlePieces(shuffled)
+    setPuzzleSolved(false)
+  }
+
+  const barTitle = page === 'hub' ? '学习' :
+    page === 'classic' ? '經典篇章' :
+    page === 'classic-detail' ? DSE_TEXTS.find(t => t.id === selectedTextId)?.title || '' :
+    page === 'words' ? '實詞虛詞' :
+    page === 'words-practice' ? '詞義練習' :
+    page === 'grammar' ? '句式語法' :
+    page === 'grammar-detail' ? GRAMMAR_POINTS.find(g => g.id === grammarDetailId)?.name || '' :
+    page === 'pastpaper' ? '歷年真題' :
+    page === 'pastpaper-quiz' ? `${pastpaperYear}年真題` :
+    page === 'dialogue' ? '時空對話框' :
+    page === 'ancient-circle' ? '古人圈' : '拼句遊戲'
+
+  return (
+    <div className="min-h-screen" style={{ background: 'var(--paper)' }}>
+      <TopBar
+        title={barTitle}
+        showBack={page !== 'hub'}
+        rightAction={page !== 'hub' ? { label: '返回', onClick: () => { setPage('hub'); setSelectedTextId(null); setGrammarDetailId(null); setPastpaperYear(null) } } : undefined}
+      />
+
+      <div className="app-container mx-auto px-4 pb-24 space-y-4">
+        {/* ===== HUB ===== */}
+        {page === 'hub' && (
+          <>
+            <div className="card-ink p-5">
+              <p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>文言文學習資源</p>
+              <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>DSE中文科 · 12篇指定篇章 · 系統學習</p>
+            </div>
+            <div className="grid gap-3">
+              {MODULES.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => {
+                    if (m.id === 'puzzle') startPuzzle()
+                    setPage(m.id)
+                  }}
+                  className="card-ink p-4 text-left flex items-center gap-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: `${m.accent}15` }}>
+                    {m.emoji}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{m.title}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'rgba(31,26,20,0.4)' }}>{m.desc}</p>
+                  </div>
+                  <span style={{ color: 'rgba(31,26,20,0.2)' }}>→</span>
+                </button>
+              ))}
+            </div>
+            <button onClick={() => navigate('/wrongbook')} className="card-ink p-4 text-left flex items-center gap-4 w-full transition-all duration-300 hover:-translate-y-0.5">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: 'rgba(139,94,60,0.1)' }}>📕</div>
+              <div className="flex-1"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>錯題本</p><p className="text-xs mt-0.5" style={{ color: 'rgba(31,26,20,0.4)' }}>按詞義/句式分類複習錯題</p></div>
+              <span style={{ color: 'rgba(31,26,20,0.2)' }}>→</span>
+            </button>
+          </>
+        )}
+
+        {/* ===== 經典篇章 ===== */}
+        {page === 'classic' && (
+          <div className="space-y-2.5">
+            {DSE_TEXTS.map(text => (
+              <button key={text.id} onClick={() => { setSelectedTextId(text.id); setPage('classic-detail') }}
+                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
+                <div className="flex items-center justify-between"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{text.title}</p><span className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>{text.dynasty}</span></div>
+                <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.45)' }}>{text.author} · {text.themes.join('、')}</p>
+              </button>
+            ))}
+          </div>
+        )}
+        {page === 'classic-detail' && selectedTextId && (() => { const t = DSE_TEXTS.find(x => x.id === selectedTextId)!; return (
+          <div className="space-y-4">
+            <div className="card-ink p-5"><p className="text-lg font-bold" style={{ color: 'var(--ink)' }}>{t.title}</p><p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>{t.author} · {t.dynasty}</p>
+              <div className="flex gap-2 mt-3">{t.themes.map(th => (<span key={th} className="text-xs px-2 py-1 rounded-full" style={{ background: 'var(--jade-light)', color: 'var(--jade)' }}>{th}</span>))}</div>
+            </div>
+            <div className="card-ink p-5"><p className="text-xs font-medium mb-3" style={{ color: 'rgba(31,26,20,0.5)' }}>重點詞句</p><p className="text-sm leading-relaxed" style={{ color: 'rgba(31,26,20,0.55)' }}>此篇章相關的練習題目正在準備中。完成後你可以在這裡看到逐句解析、重點詞彙標註和練習題。</p></div>
+            <button onClick={() => navigate('/variant/k1/w1')} className="w-full py-3 rounded-xl text-white text-sm transition-all" style={{ background: 'var(--jade)' }}>練習相關題目 →</button>
+          </div>
+        )})()}
+
+        {/* ===== 實詞虛詞 ===== */}
+        {page === 'words' && (
+          <div className="space-y-2.5">
+            <div className="flex gap-2 mb-2">{['全部', '實詞', '虛詞'].map(cat => <button key={cat} className="text-xs px-3 py-1.5 rounded-full" style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)', background: '#fff' }}>{cat}</button>)}</div>
+            {WORD_CARDS.map((card, i) => (
+              <button key={card.id} onClick={() => { setWordIndex(i); setShowWordAnswer(false); setPage('words-practice') }}
+                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
+                <div className="flex items-center justify-between"><span className="text-xs px-2 py-0.5 rounded-full" style={{ background: card.category === '實詞' ? 'rgba(200,164,92,0.15)' : 'rgba(26,107,74,0.1)', color: card.category === '實詞' ? 'var(--gold)' : 'var(--jade)' }}>{card.category}</span><span className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>#{card.id}</span></div>
+                <p className="text-lg font-bold mt-2" style={{ color: 'var(--ink)', fontFamily: 'serif' }}>{card.word}</p>
+                <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)', fontFamily: 'serif' }}>{card.sentence}</p>
+              </button>
+            ))}
+          </div>
+        )}
+        {page === 'words-practice' && (() => { const card = WORD_CARDS[wordIndex]; return (
+          <div className="space-y-4">
+            <div className="card-ink p-5 text-center"><p className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>{card.category} · #{card.id}</p><p className="text-3xl font-bold mt-4 mb-2" style={{ color: 'var(--ink)', fontFamily: 'serif' }}>{card.word}</p><p className="text-sm" style={{ color: 'rgba(31,26,20,0.5)', fontFamily: 'serif' }}>{card.sentence}</p></div>
+            <p className="text-xs text-center" style={{ color: 'rgba(31,26,20,0.4)' }}>選擇正確的釋義</p>
+            <div className="space-y-2">{card.options.map(opt => (
+              <button key={opt} onClick={() => setShowWordAnswer(true)}
+                className={`w-full p-3 rounded-xl text-left text-sm transition-all ${showWordAnswer && card.correctAnswer.includes(opt) ? 'border-2' : 'border'} `}
+                style={showWordAnswer && card.correctAnswer.includes(opt) ? { borderColor: 'var(--jade)', background: 'var(--jade-light)', color: 'var(--jade)' } : { borderColor: 'rgba(31,26,20,0.1)', background: '#fff', color: 'var(--ink)' }}>
+                {opt}{showWordAnswer && card.correctAnswer.includes(opt) && <span className="float-right">✓</span>}
+              </button>
+            ))}</div>
+            {showWordAnswer && <div className="card-ink p-4"><p className="text-xs font-medium" style={{ color: 'var(--jade)' }}>解析</p><p className="text-xs mt-1 leading-relaxed" style={{ color: 'rgba(31,26,20,0.55)' }}>{card.explanation}</p><p className="text-xs mt-2" style={{ color: 'var(--gold)' }}>💡 {card.memoryTip}</p>
+              <div className="flex gap-2 mt-3">{wordIndex < WORD_CARDS.length - 1 && <button onClick={() => { setWordIndex(i => i + 1); setShowWordAnswer(false) }} className="flex-1 py-2 rounded-lg text-white text-xs" style={{ background: 'var(--jade)' }}>下一詞 →</button>}
+              <button onClick={() => { setPage('words'); setShowWordAnswer(false) }} className="py-2 px-4 rounded-lg text-xs" style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)' }}>返回列表</button></div></div>}
+          </div>
+        )})()}
+
+        {/* ===== 句式語法 ===== */}
+        {page === 'grammar' && (
+          <div className="space-y-2.5">
+            {GRAMMAR_POINTS.map(g => (
+              <button key={g.id} onClick={() => { setGrammarDetailId(g.id); setPage('grammar-detail') }}
+                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
+                <div className="flex items-center justify-between"><span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(212,168,83,0.15)', color: '#d4a853' }}>{g.category}</span></div>
+                <p className="text-sm font-medium mt-2" style={{ color: 'var(--ink)' }}>{g.name}</p>
+                <p className="text-xs mt-1 line-clamp-2" style={{ color: 'rgba(31,26,20,0.45)' }}>{g.description}</p>
+              </button>
+            ))}
+          </div>
+        )}
+        {page === 'grammar-detail' && grammarDetailId && (() => { const g = GRAMMAR_POINTS.find(x => x.id === grammarDetailId)!; return (
+          <div className="space-y-4">
+            <div className="card-ink p-5"><p className="text-base font-bold" style={{ color: 'var(--ink)' }}>{g.name}</p><p className="text-sm mt-2 leading-relaxed" style={{ color: 'rgba(31,26,20,0.55)' }}>{g.description}</p></div>
+            {g.examples.map((ex, i) => (
+              <div key={i} className="card-ink p-4"><p className="text-sm font-serif" style={{ color: 'var(--ink)' }}>「{ex.text}」</p><p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.35)' }}>——《{ex.source}》</p><p className="text-xs mt-2 leading-relaxed" style={{ color: 'rgba(31,26,20,0.5)' }}>{ex.analysis}</p></div>
+            ))}
+          </div>
+        )})()}
+
+        {/* ===== 歷年真題 ===== */}
+        {page === 'pastpaper' && (
+          <div className="space-y-2.5">
+            {PAST_PAPERS.map(pp => (
+              <button key={pp.year} onClick={() => { setPastpaperYear(pp.year); setPage('pastpaper-quiz') }}
+                className="card-ink p-4 text-left w-full transition-all duration-300 hover:-translate-y-0.5">
+                <div className="flex items-center justify-between"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{pp.year}年</p><span className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>{pp.source}</span></div>
+                <p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>{pp.questions.length} 題</p>
+              </button>
+            ))}
+          </div>
+        )}
+        {page === 'pastpaper-quiz' && pastpaperYear && (() => { const pp = PAST_PAPERS.find(x => x.year === pastpaperYear)!; return (
+          <div className="space-y-4">
+            <div className="card-ink p-4"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{pp.year}年 DSE 文言文試題</p><p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>{pp.source} · {pp.questions.length}題</p></div>
+            {pp.questions.map((q, qi) => (
+              <div key={qi} className="card-ink p-4"><p className="text-xs mb-2" style={{ color: 'rgba(31,26,20,0.35)' }}>第{qi + 1}題</p>
+                <pre className="text-sm font-serif whitespace-pre-wrap leading-relaxed" style={{ color: 'var(--ink)' }}>{q.question}</pre>
+                <div className="mt-3 space-y-1">{q.options.map(opt => (
+                  <div key={opt} className="text-xs p-2 rounded-lg" style={{ border: opt === q.correctAnswer ? '1px solid var(--jade)' : '1px solid rgba(31,26,20,0.08)', background: opt === q.correctAnswer ? 'var(--jade-light)' : '#fff', color: opt === q.correctAnswer ? 'var(--jade)' : 'rgba(31,26,20,0.5)' }}>{opt}{opt === q.correctAnswer && <span className="float-right text-xs">✓ 答案</span>}</div>
+                ))}</div>
+                <p className="text-xs mt-2" style={{ color: 'rgba(31,26,20,0.45)' }}>{q.explanation}</p>
+              </div>
+            ))}
+          </div>
+        )})()}
+
+        {/* ===== 時空對話框 ===== */}
+        {page === 'dialogue' && (
+          <div className="space-y-4">
+            {dialogueMessages.length === 0 ? (
+              <>
+                <div className="card-ink p-5"><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>選擇一位古人，開始對話</p><p className="text-xs mt-1" style={{ color: 'rgba(31,26,20,0.4)' }}>AI將以古人的身份和語氣與你交流</p></div>
+                <div className="space-y-2">{ANCIENT_CHARACTERS.map(c => (
+                  <button key={c.id} onClick={() => { setDialogueChar(c); setDialogueMessages([{ from: 'ai', text: c.greeting }]) }}
+                    className="card-ink p-4 text-left w-full flex items-center gap-3 transition-all duration-300 hover:-translate-y-0.5">
+                    <span className="text-2xl">{c.avatar}</span>
+                    <div><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{c.name}</p><p className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>{c.dynasty} · {DSE_TEXTS.find(t => t.id === c.textId)?.title}</p></div>
+                  </button>
+                ))}</div>
+              </>
+            ) : (
+              <>
+                <div className="card-ink p-3 flex items-center gap-3">
+                  <span className="text-xl">{dialogueChar.avatar}</span>
+                  <div><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{dialogueChar.name}</p><p className="text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}>{dialogueChar.dynasty}</p></div>
+                  <button onClick={() => { setDialogueMessages([]); setDialogueInput('') }} className="ml-auto text-xs" style={{ color: 'rgba(31,26,20,0.4)' }}>換人</button>
+                </div>
+                <div className="space-y-3">{dialogueMessages.map((m, i) => (
+                  <div key={i} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${m.from === 'user' ? 'text-white rounded-br-md' : 'border rounded-bl-md'}`}
+                      style={m.from === 'user' ? { background: 'var(--jade)' } : { background: '#fff', borderColor: 'rgba(31,26,20,0.08)', color: 'var(--ink)' }}>
+                      {m.from === 'ai' && <span className="mr-1">{dialogueChar.avatar} </span>}{m.text}
+                    </div>
+                  </div>
+                ))}</div>
+                <div className="flex gap-2"><input value={dialogueInput} onChange={e => setDialogueInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && dialogueInput.trim()) { setDialogueMessages(prev => [...prev, { from: 'user', text: dialogueInput }]); setDialogueInput(''); setTimeout(() => setDialogueMessages(prev => [...prev, { from: 'ai', text: '善哉！此問甚好。' + dialogueChar.name + '撫鬚而思……（此為展示模式，API接入後將實現真實對話）' }]), 800) } }}
+                  placeholder="輸入你的問題..." className="flex-1 px-4 py-2.5 rounded-xl text-sm" style={{ border: '1px solid rgba(31,26,20,0.1)', background: '#fff', outline: 'none' }} />
+                  <button className="px-4 py-2.5 rounded-xl text-white text-sm" style={{ background: 'var(--jade)' }} onClick={() => { if (dialogueInput.trim()) { setDialogueMessages(prev => [...prev, { from: 'user', text: dialogueInput }]); setDialogueInput(''); setTimeout(() => setDialogueMessages(prev => [...prev, { from: 'ai', text: '此問題頗有見地。待我細細道來……（API接入後將實現真實對話）' }]), 800) } }}>發送</button></div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ===== 古人圈 ===== */}
+        {page === 'ancient-circle' && (
+          <div className="space-y-3">
+            {ANCIENT_POSTS.map(post => (
+              <div key={post.id} className="card-ink p-4">
+                <div className="flex items-center gap-3 mb-3"><span className="text-2xl">{post.author.avatar}</span><div><p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{post.author.name}</p><p className="text-xs" style={{ color: 'rgba(31,26,20,0.3)' }}>{post.author.dynasty} · {post.time}</p></div></div>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--ink)', fontFamily: 'serif' }}>{post.content}</p>
+                <div className="flex gap-4 mt-3 text-xs" style={{ color: 'rgba(31,26,20,0.35)' }}><span>❤️ {post.likes}</span><span>💬 {post.comments}</span></div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ===== 拼句遊戲 ===== */}
+        {page === 'puzzle' && (
+          <div className="space-y-4">
+            <div className="card-ink p-5 text-center"><p className="text-xs" style={{ color: 'rgba(31,26,20,0.4)' }}>按正確順序排列</p><p className="text-xs mt-2" style={{ color: 'var(--gold)' }}>提示：{puzzleSentence.hint}</p></div>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {puzzlePieces.map((char, i) => (
+                <button key={i} onClick={() => { const newPieces = [...puzzlePieces]; newPieces.splice(i, 1); newPieces.push(char); setPuzzlePieces(newPieces); if (newPieces.join('') === puzzleSentence.original) setPuzzleSolved(true) }}
+                  className="w-12 h-12 rounded-xl text-lg font-bold flex items-center justify-center transition-all hover:-translate-y-0.5"
+                  style={{ background: '#fff', border: '1px solid rgba(31,26,20,0.1)', color: 'var(--ink)', fontFamily: 'serif' }}>{char}</button>
+              ))}
+            </div>
+            {puzzleSolved && <div className="card-ink p-4 text-center" style={{ borderColor: 'var(--jade)' }}><p className="text-sm font-bold" style={{ color: 'var(--jade)' }}>🎉 拼對了！</p><p className="text-lg mt-2 font-serif" style={{ color: 'var(--ink)' }}>{puzzleSentence.original}</p>
+              <button onClick={() => { const next = PUZZLE_SENTENCES[(PUZZLE_SENTENCES.indexOf(puzzleSentence) + 1) % PUZZLE_SENTENCES.length]; setPuzzleSentence(next); startPuzzle() }} className="mt-3 px-4 py-2 rounded-lg text-white text-xs" style={{ background: 'var(--jade)' }}>下一句 →</button></div>}
+            <button onClick={startPuzzle} className="w-full py-2 rounded-lg text-xs" style={{ border: '1px solid rgba(31,26,20,0.1)', color: 'rgba(31,26,20,0.5)' }}>重新排列</button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
